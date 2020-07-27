@@ -112,7 +112,7 @@ class MainActivity : AppCompatActivity() {
 
         val title = movie.title
         val titleView = TextView(this)
-        titleView.setTextSize(TypedValue.COMPLEX_UNIT_SP,80.toFloat())
+        titleView.setTextSize(TypedValue.COMPLEX_UNIT_SP,60.toFloat())
         titleView.setTextAlignment(View.TEXT_ALIGNMENT_GRAVITY);
         titleView.setGravity(Gravity.CENTER_VERTICAL)
 
@@ -121,7 +121,7 @@ class MainActivity : AppCompatActivity() {
 
         val genres = movie.stringGenres
         val genresView = TextView(this)
-        titleView.setTextSize(TypedValue.COMPLEX_UNIT_SP,50.toFloat())
+        titleView.setTextSize(TypedValue.COMPLEX_UNIT_SP,40.toFloat())
         genresView.text = genres
 
         linLayout.addView(imageView)

@@ -58,6 +58,10 @@ class MovieDetails : AppCompatActivity() {
         }
     }
 
+    fun backClick(){
+        finish()
+    }
+
 
 
 }

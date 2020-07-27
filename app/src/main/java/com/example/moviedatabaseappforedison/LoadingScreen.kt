@@ -78,7 +78,7 @@ class LoadingScreen : AppCompatActivity() {
          val movieListIterator = movieList.results.iterator()
          while(movieListIterator.hasNext()) {
              val movie = movieListIterator.next()
-             var imageUrl = "http://image.tmdb.org/t/p/w500/" + movie.poster_path + "?api_key=80df7863ef61abeeac17ee93f000216b"
+             var imageUrl = "https://image.tmdb.org/t/p/w500/" + movie.poster_path + "?api_key=80df7863ef61abeeac17ee93f000216b"
 
              val f = File(this.filesDir, movie.id.toString() + ".png")
 
@@ -126,6 +126,7 @@ class LoadingScreen : AppCompatActivity() {
                      Bitmap.Config.ARGB_8888,
                      Response.ErrorListener {
                          println("Error Downloading Image")
+                         Log.e("Error", " Error downloading image. Error: " + it)
                      }
                  )
 
