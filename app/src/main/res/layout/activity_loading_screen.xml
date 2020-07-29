@@ -11,30 +11,31 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:orientation="vertical"
-        >
+        android:orientation="vertical">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Movie DataBase App"
-            android:textSize="40dp"
-            />
+            android:textSize="40dp" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
             android:text="Loading..."
-            android:textSize="25dp"
-            android:layout_gravity="center_horizontal"/>
+            android:textSize="25dp" />
+
         <ProgressBar
             android:id="@+id/progressBar"
 
-            android:indeterminate="false"
-            android:max = "100"
-            android:progress = "0"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
             android:layout_gravity="center_horizontal"
+            android:indeterminate="false"
+            android:max="100"
+            android:progress="0"
 
             />
     </LinearLayout>
