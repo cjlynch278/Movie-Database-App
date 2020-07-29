@@ -1,7 +1,6 @@
 package com.example.moviedatabaseappforedison
 import android.content.Intent
 import android.graphics.*
-import org.json.JSONObject
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -20,12 +19,11 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.json.JSONArray
 import java.io.File
 
 class MainActivity : AppCompatActivity() {
 
-    var genresMap : MutableMap<Int, String> = mutableMapOf(0 to "null")
+    private var genresMap : MutableMap<Int, String> = mutableMapOf(0 to "null")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,37 +33,32 @@ class MainActivity : AppCompatActivity() {
         CoroutineScope(IO).launch{
            startMovieLoad()
         }
-
     }
 
      //Start Creating the UI. Being with loading genres
-     suspend fun startMovieLoad(){
+     private fun startMovieLoad(){
          val queue = Volley.newRequestQueue(this)
-         val genreURL : String = "https://api.themoviedb.org/3/genre/movie/list?api_key=80df7863ef61abeeac17ee93f000216b"
+         val genreURL = "https://api.themoviedb.org/3/genre/movie/list?api_key=80df7863ef61abeeac17ee93f000216b"
 
          //API request to load all genres
          val genreRequest = StringRequest(
              Request.Method.GET, genreURL,
              Response.Listener<String> { response ->
-                 var gson = Gson()
-                 val jsonResponse = JSONObject(response)
-                 val genres : JSONArray= jsonResponse["genres"] as JSONArray
-
                  //Load genre api response to our Genre List object
-                 var genreList = Gson().fromJson(response, GenreList::class.java )
+                 val genreList = Gson().fromJson(response, GenreList::class.java )
                  for(genre: GenreObject in genreList.genres){
-                     this.genresMap.put(genre.id, genre.name)
+                    // this.genresMap.put(genre.id, genre.name)
+                     this.genresMap[genre.id] = genre.name
                  }
                  loadMovies()
              },
              Response.ErrorListener{
                  Log.e("Error", "Error downloading Genres")
              })
-
          queue.add(genreRequest)
      }
 
-     fun loadMovies(){
+     private fun loadMovies(){
 
          val url = "https://api.themoviedb.org/3/movie/popular?api_key=80df7863ef61abeeac17ee93f000216b"
          val queue = Volley.newRequestQueue(this)
@@ -73,10 +66,8 @@ class MainActivity : AppCompatActivity() {
          val stringRequest = StringRequest(
              Request.Method.GET, url,
              Response.Listener<String> { response ->
-                 var gson = Gson()
-                 val jsonResponse = JSONObject(response)
 
-                 var movieList = Gson().fromJson(response, MovieList::class.java )
+                 val movieList = Gson().fromJson(response, MovieList::class.java )
                  for(movie in movieList.results ){
                      var genresString = ""
 
@@ -86,26 +77,24 @@ class MainActivity : AppCompatActivity() {
                      }
 
                      //Remove last comma from string genres
-                     movie.stringGenres = genresString.toString().substring(0, genresString.length -2)
-                    val context = this
+                     movie.stringGenres = genresString.substring(0, genresString.length -2)
                      CoroutineScope(IO).launch{
-                         createMovieUIObject(movie)
+                         this@MainActivity.createMovieUIObject(movie)
                      }
                  }
              },
              Response.ErrorListener { })
          queue.add(stringRequest)
-
     }
 
     private suspend fun createMovieUIObject(movie: MovieObject){
         val linLayout = LinearLayout(this)
-        linLayout.setOrientation(LinearLayout.HORIZONTAL)
+        linLayout.orientation = LinearLayout.HORIZONTAL
 
         val detailsLayout = LinearLayout(this)
-        detailsLayout.setOrientation(LinearLayout.VERTICAL)
+        detailsLayout.orientation = LinearLayout.VERTICAL
         detailsLayout.setVerticalGravity(Gravity.CENTER_VERTICAL)
-        val newFile = File(this.filesDir, movie.id.toString() + ".png")
+        val newFile = File(this.filesDir, movie.id + ".png")
         val myBitmap = BitmapFactory.decodeFile(newFile.absolutePath)
         val imageView = ImageView(this)
         imageView.setImageBitmap(myBitmap)
@@ -113,11 +102,11 @@ class MainActivity : AppCompatActivity() {
         val title = movie.title
         val titleView = TextView(this)
         titleView.setTextSize(TypedValue.COMPLEX_UNIT_SP,60.toFloat())
-        titleView.setTextAlignment(View.TEXT_ALIGNMENT_GRAVITY);
-        titleView.setGravity(Gravity.CENTER_VERTICAL)
+        titleView.textAlignment = View.TEXT_ALIGNMENT_GRAVITY
+        titleView.gravity = Gravity.CENTER_VERTICAL
 
         titleView.text = title
-        titleView.setTypeface(null, Typeface.BOLD);
+        titleView.setTypeface(null, Typeface.BOLD)
 
         val genres = movie.stringGenres
         val genresView = TextView(this)
@@ -140,10 +129,10 @@ class MainActivity : AppCompatActivity() {
             parentLayout.addView(linLayout)
         }
     }
-    fun onClick(movie: MovieObject){
+    private fun onClick(movie: MovieObject){
 
         //Start movie details class with info about which movie was clicked
-        var intent =  Intent(this, MovieDetails::class.java)
+        val intent =  Intent(this, MovieDetails::class.java)
         intent.putExtra("Title", movie.title)
         intent.putExtra("Overview", movie.overview)
         intent.putExtra("MovieGenres", movie.stringGenres)
