@@ -3,23 +3,21 @@ package com.example.moviedatabaseappforedison
 import android.graphics.BitmapFactory
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.LinearLayout
 import kotlinx.android.synthetic.main.activity_movie_details.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.io.File
+import java.text.DecimalFormat
 
 //Class for the movie details page
 class MovieDetails : AppCompatActivity() {
 
-    var movieTitle : String? = null
-    var movieOverview : String? = null
-    var movieGenres : String? = null
-    var posterPath : String? = null
-    var id : String? = null
-    var movieVoteAverage: Float? = null
+    private var movieTitle : String? = null
+    private var movieOverview : String? = null
+    private var movieGenres : String? = null
+    private var posterPath : String? = null
+    private var id : String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,34 +28,27 @@ class MovieDetails : AppCompatActivity() {
         this.movieGenres = intent.getStringExtra("MovieGenres")
         this.posterPath = intent.getStringExtra("PosterPath")
         this.id = intent.getStringExtra("id")
-        this.movieVoteAverage = intent.getFloatExtra("voteAverage", 0.toFloat())
+        val decimalFormat = DecimalFormat("#.#")
+        val movieVoteAverage = intent.getDoubleExtra("voteAverage", 0.toDouble())
+        decimalFormat.format(movieVoteAverage)
         overview.text = this.movieOverview
         genres.text = this.movieGenres
         movietitle.text = this.movieTitle
-        voteAverage.text = "Rating: " + movieVoteAverage + "/10"
-        createUI()
 
-    }
-    fun createUI(){
-        var context =this
-        CoroutineScope(Dispatchers.IO).launch{
+        voteAverage.text = resources.getString(R.string.rating_text, movieVoteAverage )
+        CoroutineScope(Dispatchers.IO).launch {
             loadImage()
         }
+
     }
-    suspend fun  loadImage() {
+
+    private fun  loadImage() {
         val newFile = File(this.filesDir, this.id.toString() + ".png")
         val myBitmap = BitmapFactory.decodeFile(newFile.absolutePath)
         poster.setImageBitmap(myBitmap)
     }
 
-    private suspend fun addLinearLayout(linLayout: LinearLayout) {
-        withContext (Dispatchers.Main) {
-            val parentLayout = findViewById<LinearLayout>(R.id.layout)
-            parentLayout.addView(linLayout)
-
-        }
-    }
-
+    @Override
     fun backClick(){
         finish()
     }

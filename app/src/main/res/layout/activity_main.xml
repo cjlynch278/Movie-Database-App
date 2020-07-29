@@ -5,33 +5,36 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
+
     <LinearLayout
         android:id="@+id/ParentLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="left"
         android:orientation="vertical">
+
         <ImageView
             android:id="@+id/testImageView"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content" />
 
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:id="@+id/testLayout"
-        android:layout_height="wrap_content">
+        <RelativeLayout
+            android:id="@+id/testLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
 
-    </RelativeLayout>
+        </RelativeLayout>
+
         <ScrollView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true">
 
             <LinearLayout
+                android:id="@+id/layout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/layout"
-                android:orientation="vertical"/>
+                android:orientation="vertical" />
         </ScrollView>
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -2,4 +2,5 @@
     <string name="app_name">Movie Database App for Edison</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_loading_screen">LoadingScreen</string>
+    <string name ="rating_text">Rating: %.1f/10</string>
 </resources>
