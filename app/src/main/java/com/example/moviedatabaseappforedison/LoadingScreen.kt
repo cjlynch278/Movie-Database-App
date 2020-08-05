@@ -17,6 +17,7 @@ import kotlinx.coroutines.*
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
+import java.io.Serializable
 
 
 //Loading screen (splash screen) that is displayed while the movies objects load from the api.
@@ -26,6 +27,8 @@ class LoadingScreen : AppCompatActivity() {
     //      this is used to detemrine how full the progress bar should be
     private var numRequests = 0
     private val mainContext = this
+    private var genresMap : MutableMap<Int, String> = mutableMapOf(0 to "null")
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,13 +54,48 @@ class LoadingScreen : AppCompatActivity() {
                     Response.Listener<String> { response ->
                             //Load Response to a movieList object using GSON
                             val movieList = Gson().fromJson(response, MovieList::class.java)
-                            downloadAllMovies(movieList)
+                            addGenres(movieList)
 
                     }, Response.ErrorListener {
                 })
             queue.add(stringRequest)
 
     }
+    //Add Genres to movies in movie list
+    private fun addGenres(movieList: MovieList){
+        val queue = Volley.newRequestQueue(this)
+        val genreURL = "https://api.themoviedb.org/3/genre/movie/list?api_key=80df7863ef61abeeac17ee93f000216b"
+
+        //API request to load all genres
+        val genreRequest = StringRequest(
+            Request.Method.GET, genreURL,
+            Response.Listener<String> { response ->
+                //Load genre api response to our Genre List object
+                val genreList = Gson().fromJson(response, GenreList::class.java )
+                for(genre: GenreObject in genreList.genres){
+                    // this.genresMap.put(genre.id, genre.name)
+                    this.genresMap[genre.id] = genre.name
+                }
+                for(movie in movieList.results ){
+                    var genresString = ""
+
+                    //Create genres string for movie object
+                    for(genreID : Int in movie.genre_ids){
+                        genresString = genresString + this.genresMap[genreID] + ", "
+                    }
+
+                    //Remove last comma from string genres
+                    movie.stringGenres = genresString.substring(0, genresString.length -2)
+                }
+                downloadAllMovies(movieList)
+            },
+            Response.ErrorListener{
+                Log.e("Error", "Error downloading Genres")
+            })
+        queue.add(genreRequest)
+
+    }
+
     //Downloads all movie images
      private fun downloadAllMovies(movieList: MovieList) {
         //ProgressBar shows progress of task, set max to how many movies need to be downloaded
@@ -78,8 +116,13 @@ class LoadingScreen : AppCompatActivity() {
                  Log.d("Debug", "File exists")
                  if(!movieListIterator.hasNext()) {
                      val mainIntent = Intent(mainContext, MainActivity::class.java)
+                     mainIntent.putExtra("MovieList", movieList as Serializable)
+
                      Log.e("Debug", "StartIntent")
                      startActivity(mainIntent)
+                     val bundle =  Bundle()
+                     bundle.putSerializable("value", movieList);
+
                      mainContext.finish()
                  }
 
@@ -96,6 +139,8 @@ class LoadingScreen : AppCompatActivity() {
                          val bitmapdata = bos.toByteArray()
                          val fos = FileOutputStream(f)
                          fos.write(bitmapdata)
+                         Log.e("Debug" , "Bitmap : " + it)
+
                          fos.flush()
                          fos.close()
                          progressBar.progress = movieList.results.size - numRequests
@@ -105,6 +150,8 @@ class LoadingScreen : AppCompatActivity() {
                          //StartMain context if all movies are loaded
                          if (numRequests == 0) {
                              val mainIntent = Intent(mainContext, MainActivity::class.java)
+                             mainIntent.putExtra("MovieList", movieList as Serializable)
+
                              Log.e("Debug", "StartIntent")
                              startActivity(mainIntent)
                              mainContext.finish()

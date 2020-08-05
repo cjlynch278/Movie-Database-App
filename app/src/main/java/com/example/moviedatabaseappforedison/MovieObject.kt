@@ -1,5 +1,8 @@
 package com.example.moviedatabaseappforedison
 
+import android.graphics.Bitmap
+import java.io.Serializable
+
 
 //Movie object to store info about each movie
 data class MovieObject(
@@ -18,5 +21,4 @@ data class MovieObject(
     val overview: String,
     val release_date: String,
     val imageUrl: String,
-    var stringGenres : String
-)
+    var stringGenres : String) : Serializable

@@ -14,12 +14,22 @@ import android.util.Log
 import android.util.TypedValue
 import android.view.Gravity
 import android.widget.*
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
+import java.io.Serializable
+import android.graphics.BitmapFactory
+import android.graphics.Bitmap
+import androidx.core.app.ComponentActivity
+import androidx.core.app.ComponentActivity.ExtraData
+import androidx.core.content.ContextCompat.getSystemService
+import android.icu.lang.UCharacter.GraphemeClusterBreak.T
+
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -28,35 +38,30 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
+        val movieList = intent.getSerializableExtra("MovieList") as MovieList
         //Coroutine to avoid freezing main thread
         CoroutineScope(IO).launch{
-           startMovieLoad()
+           // test(movieList.results)
+            for(movie in movieList.results ){
+                //Remove last comma from string genres
+                createMovieUIObject(movie)
+
+            }
+           // loadMovies()
         }
     }
 
-     //Start Creating the UI. Being with loading genres
-     private fun startMovieLoad(){
-         val queue = Volley.newRequestQueue(this)
-         val genreURL = "https://api.themoviedb.org/3/genre/movie/list?api_key=80df7863ef61abeeac17ee93f000216b"
+    private fun test(movieList: List<MovieObject>){
 
-         //API request to load all genres
-         val genreRequest = StringRequest(
-             Request.Method.GET, genreURL,
-             Response.Listener<String> { response ->
-                 //Load genre api response to our Genre List object
-                 val genreList = Gson().fromJson(response, GenreList::class.java )
-                 for(genre: GenreObject in genreList.genres){
-                    // this.genresMap.put(genre.id, genre.name)
-                     this.genresMap[genre.id] = genre.name
-                 }
-                 loadMovies()
-             },
-             Response.ErrorListener{
-                 Log.e("Error", "Error downloading Genres")
-             })
-         queue.add(genreRequest)
-     }
+        for(movie in movieList){
+            Log.e("Debug" , "Movie: " + movie.title)
+            Log.e( "debug", "genres: " +movie.stringGenres)
+           // val bmp = BitmapFactory.decodeByteArray(movie.image_resource, 0, movie.image_resource.size)
+
+            //this.testImageView.setImageBitmap(movie.image_resource)
+        }
+    }
+
 
      private fun loadMovies(){
 
