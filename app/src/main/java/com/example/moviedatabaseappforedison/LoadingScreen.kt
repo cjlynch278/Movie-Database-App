@@ -13,7 +13,8 @@ import com.android.volley.toolbox.ImageRequest
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.google.gson.Gson
-import kotlinx.coroutines.*
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
@@ -121,7 +122,7 @@ class LoadingScreen : AppCompatActivity() {
                      Log.e("Debug", "StartIntent")
                      startActivity(mainIntent)
                      val bundle =  Bundle()
-                     bundle.putSerializable("value", movieList);
+                     bundle.putSerializable("value", movieList)
 
                      mainContext.finish()
                  }
@@ -139,8 +140,6 @@ class LoadingScreen : AppCompatActivity() {
                          val bitmapdata = bos.toByteArray()
                          val fos = FileOutputStream(f)
                          fos.write(bitmapdata)
-                         Log.e("Debug" , "Bitmap : " + it)
-
                          fos.flush()
                          fos.close()
                          progressBar.progress = movieList.results.size - numRequests

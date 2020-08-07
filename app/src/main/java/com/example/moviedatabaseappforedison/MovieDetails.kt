@@ -1,8 +1,8 @@
 package com.example.moviedatabaseappforedison
 
 import android.graphics.BitmapFactory
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_movie_details.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -13,11 +13,12 @@ import java.text.DecimalFormat
 //Class for the movie details page
 class MovieDetails : AppCompatActivity() {
 
-    private var movieTitle : String? = null
-    private var movieOverview : String? = null
-    private var movieGenres : String? = null
-    private var posterPath : String? = null
-    private var id : String? = null
+    private var movieTitle: String? = null
+    private var movieOverview: String? = null
+    private var movieGenres: String? = null
+    private var posterPath: String? = null
+    private var id: String? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,24 +36,23 @@ class MovieDetails : AppCompatActivity() {
         genres.text = this.movieGenres
         movietitle.text = this.movieTitle
 
-        voteAverage.text = resources.getString(R.string.rating_text, movieVoteAverage )
+        voteAverage.text = resources.getString(R.string.rating_text, movieVoteAverage)
         CoroutineScope(Dispatchers.IO).launch {
             loadImage()
         }
 
     }
 
-    private fun  loadImage() {
+    private fun loadImage() {
         val newFile = File(this.filesDir, this.id.toString() + ".png")
         val myBitmap = BitmapFactory.decodeFile(newFile.absolutePath)
         poster.setImageBitmap(myBitmap)
     }
 
     @Override
-    fun backClick(){
+    fun backClick() {
         finish()
     }
-
 
 
 }
